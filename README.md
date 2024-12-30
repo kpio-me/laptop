@@ -63,6 +63,9 @@ Or, attach the whole log file as an attachment.
 What it sets up
 ---------------
 
+Dotfiles:
+* config alias for dotfile management as defined at https://www.atlassian.com/git/tutorials/dotfiles
+
 macOS tools:
 
 * [Homebrew] for managing operating system libraries.
@@ -73,28 +76,36 @@ Unix tools:
 
 * [Universal Ctags] for indexing files for vim tab completion
 * [Git] for version control
+* [Delta] for git paging and diff
 * [OpenSSL] for Transport Layer Security (TLS)
-* [RCM] for managing company and personal dotfiles
 * [The Silver Searcher] for finding things in files
 * [Tmux] for saving project state and switching between projects
-* [Watchman] for watching for filesystem events
-* [Zsh] as your shell
+* [jq] for command-line JSON processing
 
 [Universal Ctags]: https://ctags.io/
 [Git]: https://git-scm.com/
+[Delta]: https://github.com/dandavison/delta
 [OpenSSL]: https://www.openssl.org/
 [RCM]: https://github.com/thoughtbot/rcm
 [The Silver Searcher]: https://github.com/ggreer/the_silver_searcher
 [Tmux]: http://tmux.github.io/
-[Watchman]: https://facebook.github.io/watchman/
-[Zsh]: http://www.zsh.org/
+[jq]: https://jqlang.github.io/jq/
 
-Heroku tools:
+Shell and terminal:
 
-* [Heroku CLI] and [Parity] for interacting with the Heroku API
+* [Starship] for customizing shell prompt
+* [iterm2] for terminal emulation
 
-[Heroku CLI]: https://devcenter.heroku.com/articles/heroku-cli
-[Parity]: https://github.com/thoughtbot/parity
+[Starship]: https://starship.rs/
+[iterm2]: https://iterm2.com/
+
+Infrastructure as Code tools:
+
+* [tfenv] for managing terraform version with projects
+* [docker] for containerization
+
+[tfenv]: https://github.com/tfutils/tfenv
+[docker]: https://www.docker.com/
 
 GitHub tools:
 
@@ -106,31 +117,45 @@ Image tools:
 
 * [ImageMagick] for cropping and resizing images
 
+[ImageMagick]: http://www.imagemagick.org/
+
 Programming languages, package managers, and configuration:
 
-* [asdf-vm] for managing programming language versions
-* [Bundler] for managing Ruby libraries
-* [Node.js] and [npm], for running apps and installing JavaScript packages
-* [Ruby] stable for writing general-purpose code
-* [Yarn] for managing JavaScript packages
-* [Rosetta 2] for running tools that are not supported in Apple silicon processors
+* [mise] for managing programming language versions
 
-[Bundler]: http://bundler.io/
-[ImageMagick]: http://www.imagemagick.org/
-[Node.js]: http://nodejs.org/
-[npm]: https://www.npmjs.org/
-[asdf-vm]: https://github.com/asdf-vm/asdf
-[Ruby]: https://www.ruby-lang.org/en/
-[Yarn]: https://yarnpkg.com/en/
-[Rosetta 2]: https://developer.apple.com/documentation/apple-silicon/about-the-rosetta-translation-environment
+[mise]: https://mise.jdx.dev/
 
 Databases:
 
-* [Postgres] for storing relational data
-* [Redis] for storing key-value data
+* [Postgres.app] for storing relational data
 
-[Postgres]: http://www.postgresql.org/
-[Redis]: http://redis.io/
+[Postgres.app]: https://postgresapp.com/
+
+IDEs and Editors:
+
+* [JetBrains Toolbox] for managing updates to IDEs
+* [vscodium] for a tracking free version of VSCode
+
+[JetBrains Toolbox]: https://www.jetbrains.com/toolbox-app/
+[vscodium]: https://vscodium.com/
+
+Secrets: 
+
+* [Bitwarden] for password managment
+
+[Bitwarden]: https://bitwarden.com/
+
+Fonts:
+
+* [font-jetbrains-mono-nerd-font]
+
+[font-jetbrains-mono-nerd-font]: https://www.nerdfonts.com/font-downloads
+
+Applications:
+
+* [Slack] for team messaging
+
+[Slack]: https://slack.com/
 
 It should take less than 15 minutes to install (depends on your machine).
 

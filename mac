@@ -1,9 +1,5 @@
 #!/bin/sh
 
-# Welcome to the thoughtbot laptop script!
-# Be prepared to turn your laptop (or desktop, no haters here)
-# into an awesome development machine.
-
 # shellcheck disable=SC3043
 
 fancy_echo() {
@@ -47,6 +43,11 @@ fi
 
 # shellcheck disable=SC2016
 append_to_zshrc 'export PATH="$HOME/.bin:$PATH"'
+
+# .cfg folder/repo for dotfiles
+# https://www.atlassian.com/git/tutorials/dotfiles
+fancy_echo "Configure .cfg repository for dotfiles ..."
+append_to_zshrc "alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'"
 
 # Determine Homebrew prefix
 arch="$(uname -m)"
@@ -93,7 +94,6 @@ if [ "$(uname -m)" = "arm64" ]
   fi
 fi
 
-
 gem_install_or_update() {
   if gem list "$1" --installed > /dev/null; then
     gem update "$@"
@@ -120,25 +120,28 @@ fi
 fancy_echo "Updating Homebrew formulae ..."
 brew update --force # https://github.com/Homebrew/brew/issues/1151
 brew bundle --file=- <<EOF
-tap "thoughtbot/formulae"
 tap "homebrew/services"
-tap "heroku/brew"
+
+# set arguments for all 'brew install --cask' commands
+cask_args appdir: "~/Applications", require_sha: true
 
 # Unix
 brew "universal-ctags"
 brew "git"
+brew "git-delta"
 brew "openssl"
-brew "rcm"
 brew "reattach-to-user-namespace"
 brew "the_silver_searcher"
 brew "tmux"
-brew "vim"
-brew "watchman"
-brew "zsh"
+brew "jq"
 
-# Heroku
-brew "heroku/brew/heroku"
-brew "parity"
+# Shell and Terminal
+brew "starship"
+cask "iterm2"
+
+# Infrastructure as Code
+brew "tfenv"
+cask "docker"
 
 # GitHub
 brew "gh"
@@ -146,66 +149,59 @@ brew "gh"
 # Image manipulation
 brew "imagemagick"
 
-# PDF Rendering
-brew "poppler"
-
 # Programming language prerequisites and package managers
 brew "libyaml" # should come after openssl
 brew "coreutils"
-brew "yarn"
-cask "gpg-suite-no-mail"
+# brew "yarn"
+# cask "gpg-suite-no-mail"
 
 # Databases
-brew "postgresql@14", restart_service: :changed
-brew "redis", restart_service: :changed
+# brew "postgresql@14", restart_service: :changed
+# brew "redis", restart_service: :changed
+cask "postgres-unofficial"
+
+# IDEs
+cask "jetbrains-toolbox"
+cask "vscodium"
+
+# Secrets
+cask "bitwarden"
+
+# Fonts
+cask "font-jetbrains-mono-nerd-font"
+
+# Applications
+cask "slack"
 EOF
 
-fancy_echo "Update heroku binary ..."
-brew unlink heroku
-brew link --force heroku
+fancy_echo "Configuring git ..."
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+git config --global alias.st status
+git config --global core.pager delta
+git config --global interactive.diffFilter 'delta --color-only'
+git config --global delta.navigate true
+git config --global merge.conflictStyle zdiff3
 
-fancy_echo "Configuring asdf version manager ..."
-if [ ! -d "$HOME/.asdf" ]; then
-  brew install asdf
-  append_to_zshrc "source $(brew --prefix asdf)/libexec/asdf.sh" 1
+fancy_echo "Configuring starship ..."
+# verify starship is not currently running, but command exists
+if command -v starship >/dev/null 2>&1; then
+  append_to_zshrc "eval \"\$(starship init zsh)\""
 fi
 
-alias install_asdf_plugin=add_or_update_asdf_plugin
-add_or_update_asdf_plugin() {
-  local name="$1"
-  local url="$2"
+fancy_echo "Configuring mise version manager ..."
+if ! command -v mise >/dev/null; then
+  brew install mise
 
-  if ! asdf plugin-list | grep -Fq "$name"; then
-    asdf plugin-add "$name" "$url"
-  else
-    asdf plugin-update "$name"
-  fi
-}
+  append_to_zshrc "eval \"\$($HOMEBREW_PREFIX/bin/mise activate zsh)\""
+fi
 
-# shellcheck disable=SC1091
-. "$(brew --prefix asdf)/libexec/asdf.sh"
-add_or_update_asdf_plugin "ruby" "https://github.com/asdf-vm/asdf-ruby.git"
-add_or_update_asdf_plugin "nodejs" "https://github.com/asdf-vm/asdf-nodejs.git"
+# fancy_echo "Installing latest Ruby ..."
+# mise use -g ruby
 
-install_asdf_language() {
-  local language="$1"
-  local version
-  version="$(asdf list-all "$language" | grep -v "[a-z]" | tail -1)"
-
-  if ! asdf list "$language" | grep -Fq "$version"; then
-    asdf install "$language" "$version"
-    asdf global "$language" "$version"
-  fi
-}
-
-fancy_echo "Installing latest Ruby ..."
-install_asdf_language "ruby"
-gem update --system
-number_of_cores=$(sysctl -n hw.ncpu)
-bundle config --global jobs $((number_of_cores - 1))
-
-fancy_echo "Installing latest Node ..."
-install_asdf_language "nodejs"
+# fancy_echo "Installing latest Node ..."
+# mise use -g node
 
 if [ -f "$HOME/.laptop.local" ]; then
   fancy_echo "Running your customizations from ~/.laptop.local ..."
