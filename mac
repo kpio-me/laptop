@@ -145,6 +145,8 @@ cask "docker"
 
 # GitHub
 brew "gh"
+brew "gnupg"
+brew "pinentry-mac"
 
 # Image manipulation
 brew "imagemagick"
@@ -172,6 +174,7 @@ cask "font-jetbrains-mono-nerd-font"
 
 # Applications
 cask "slack"
+cask "firefox"
 EOF
 
 fancy_echo "Configuring git ..."
@@ -202,6 +205,23 @@ fi
 
 # fancy_echo "Installing latest Node ..."
 # mise use -g node
+
+fancy_echo "Setting up GPG for git signing and auth ..."
+# https://alexnorell.com/post/set-up-gpg/#what-is-gpg
+# https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
+if [ ! -d "$HOME/.gnupg" ]; then
+  fancy_echo "Creating ~/.gnupg directory ..."
+  mkdir "$HOME/.gnupg"
+  chmod 700 "$HOME/.gnupg"
+
+  echo "pinentry-program $(which pinentry-mac)" >>  ~/.gnupg/gpg-agent.conf
+
+  gpg-connect-agent reloadagent /bye
+
+  append_to_zshrc "export GPG_TTY=\"\$(tty)\""
+  append_to_zshrc "export SSH_AUTH_SOCK=\$(gpgconf --list-dirs agent-ssh-socket)"
+  append_to_zshrc "gpgconf --launch gpg-agent"
+fi
 
 if [ -f "$HOME/.laptop.local" ]; then
   fancy_echo "Running your customizations from ~/.laptop.local ..."
